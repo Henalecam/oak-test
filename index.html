@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Formulário de Produto</title>
+		<style>
+			body {
+				background-color: #f2f2f2;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				font-family: Arial, sans-serif;
+				height: 100vh;
+			}
+
+			form {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				background-color: #f2f2f2;
+				padding: 20px;
+				border-radius: 10px;
+				box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+				margin-bottom: 20px;
+			}
+			table {
+				border-collapse: collapse;
+				width: 100%;
+				max-width: 600px;
+			}
+
+			label {
+				margin-bottom: 10px;
+			}
+
+			input[type='text'],
+			input[type='number'],
+			textarea,
+			select {
+				width: 100%;
+				padding: 10px;
+				margin-bottom: 20px;
+				border-radius: 5px;
+				border: none;
+				box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+			}
+
+			input[type='button'] {
+				background-color: #4caf50;
+				color: white;
+				padding: 10px 20px;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+			}
+
+			input[type='button']:hover {
+				background-color: #3e8e41;
+			}
+
+			th,
+			td {
+				border: 1px solid #ddd;
+				text-align: center;
+				padding: 8px;
+			}
+
+			th {
+				background-color: #4caf50;
+				color: white;
+			}
+
+			tr:nth-child(even) {
+				background-color: #f2f2f2;
+			}
+
+			tr.placeholder td {
+				background-color: white;
+				height: 18px;
+			}
+
+			#admin-btns {
+				display: flex;
+				justify-content: space-between;
+				width: 100%;
+				max-width: 600px;
+			}
+
+			.btn {
+				background-color: #f44336;
+				color: white;
+				padding: 10px 20px;
+				border: none;
+				cursor: pointer;
+			}
+
+			.btn:hover {
+				background-color: #d32f2f;
+			}
+
+			textarea {
+				resize: none;
+			}
+		</style>
+	</head>
+	<body onload="exibirListagem()">
+		<form>
+			<label for="nome-produto">Nome do produto:</label>
+			<input type="text" id="nome-produto" name="nome-produto" />
+
+			<label for="descricao-produto">Descrição do produto:</label>
+			<textarea id="descricao-produto" name="descricao-produto"></textarea>
+
+			<label for="valor-produto">Valor do produto:</label>
+			<input type="number" id="valor-produto" name="valor-produto" />
+
+			<label for="disponibilidade">Disponível para venda:</label>
+			<select id="disponibilidade" name="disponibilidade">
+				<option value="sim">Sim</option>
+				<option value="nao">Não</option>
+			</select>
+
+			<input type="button" value="Cadastrar" onclick="cadastrarProduto();" />
+		</form>
+
+		<table id="tabela-produtos" aria-describedby="Tabela para os produtos.">
+			<thead>
+				<tr>
+					<th>Nome</th>
+					<th>Valor</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="placeholder">
+					<td colspan="2"></td>
+				</tr>
+				<tr class="placeholder">
+					<td colspan="2"></td>
+				</tr>
+				<tr class="placeholder">
+					<td colspan="2"></td>
+				</tr>
+				<tr class="placeholder">
+					<td colspan="2"></td>
+				</tr>
+				<tr class="placeholder">
+					<td colspan="2"></td>
+				</tr>
+			</tbody>
+		</table>
+		<div id="admin-btns">
+			<button class="btn" onclick="limparFormulario()">
+				Limpar formulário
+			</button>
+			<button class="btn" onclick="produtos = [], exibirListagem()">
+				Limpar listagem
+			</button>
+		</div>
+
+		<script>
+			let produtos = []
+
+			function cadastrarProduto() {
+				const nomeProduto = document.getElementById('nome-produto').value
+				const descricaoProduto =
+					document.getElementById('descricao-produto').value
+				const valorProduto = document.getElementById('valor-produto').value
+				const disponibilidade = document.getElementById('disponibilidade').value
+
+				const produto = {
+					nome: nomeProduto,
+					descricao: descricaoProduto,
+					valor: valorProduto,
+					disponibilidade: disponibilidade,
+				}
+				if (nomeProduto == '' || descricaoProduto == '' || valorProduto == '') {
+					alert('Preencha todos os campos!')
+					return
+				}
+				produtos.push(produto)
+
+				limparFormulario()
+				exibirListagem()
+			}
+
+			function exibirListagem() {
+				const tabelaProdutos = document.getElementById('tabela-produtos')
+				const tbody = tabelaProdutos.getElementsByTagName('tbody')[0]
+
+				tbody.innerHTML = ''
+
+				produtos.sort((a, b) => a.valor - b.valor)
+
+				produtos.forEach((produto) => {
+					const tr = document.createElement('tr')
+					const tdNome = document.createElement('td')
+					const tdValor = document.createElement('td')
+
+					tdNome.textContent = produto.nome
+					tdValor.textContent = produto.valor
+
+					tdNome.addEventListener('click', () => {
+						alert(produto.descricao)
+					})
+
+					tr.appendChild(tdNome)
+					tr.appendChild(tdValor)
+
+					tbody.appendChild(tr)
+				})
+
+				const placeholders = 5 - produtos.length
+				for (let i = 0; i < placeholders; i++) {
+					const tr = document.createElement('tr')
+					tr.classList.add('placeholder')
+					const td = document.createElement('td')
+					td.setAttribute('colspan', '2')
+					tr.appendChild(td)
+					tbody.appendChild(tr)
+				}
+			}
+
+			function limparFormulario() {
+				document.getElementById('nome-produto').value = ''
+				document.getElementById('descricao-produto').value = ''
+				document.getElementById('valor-produto').value = ''
+				document.getElementById('disponibilidade').value = 'sim'
+			}
+		</script>
+	</body>
+</html>
